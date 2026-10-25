@@ -3,6 +3,15 @@ import sqlite3
 connection=sqlite3.connect('hospital.db')
 cursor=connection.cursor()
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS patients(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        age INTEGER,
+        illness TEXT
+    )
+''')
+
 def add_patient(name,age,illness):
     cursor.execute('''
         INSERT INTO patients(name,age,illness)
@@ -30,14 +39,27 @@ def view_patients():
             print(f"ID:{row[0]} | Name:{row[1]} | Age:{row[2]} | Illness:{row[3]}")
             print("------------\n")
     
+def search_name():
+    search_name=input("\nEnter the name of the patient you are looking for:")
+    cursor.execute("SELECT * FROM patients WHERE name LIKE ?", ('%' + search_name + '%',))
+    records=cursor.fetchall()
+
+    print("\n--- search results ---")
+    if not records: 
+        print(f"No patients with that name found in the database'{search_name}'.")
+    else:
+        for row in records:
+            print(f"ID:{row[0]} | Name:{row[1]} | Age:{row[2]} | Illness:{row[3]}")
+    print("------------\n")     
 
 while True:
     print("\n---NUST Hospital---")
     print("1. Add a new patient")
     print("2. View all patients")
-    print("3. Exit")
+    print("3. search for a patient by name")
+    print("4. Exit")
 
-    choice=input("Please select a number between 1 and 3:")
+    choice=input("Please select a number between 1 and 4:")
 
     if choice=='1':
         print("\n---Add a New Patient---")
@@ -49,8 +71,10 @@ while True:
         view_patients()
         print("You chose to view all patients")
     elif choice=='3':
-        connection.close()
+        search_name()
+    elif choice=='4':
         print("Thank you for using NUST Hospital database. Goodbye!")
+        connection.close()
         break
     else:
-        print("invalid choice. Please select a valid number between 1 and 3.")
+        print("invalid choice. Please select a valid number between 1 and 4.")
