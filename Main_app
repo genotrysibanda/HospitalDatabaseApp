@@ -52,14 +52,39 @@ def search_name():
             print(f"ID:{row[0]} | Name:{row[1]} | Age:{row[2]} | Illness:{row[3]}")
     print("------------\n")     
 
+def delete_patient():
+    view_patients()
+
+    try:
+        patient_id = int(input("\nEnter the ID of the patient you want to delete:"))
+    except ValueError:
+        print("Error: Please enter a valid patient ID:")
+        return
+
+    cursor.execute("DELETE FROM patients WHERE id = ?", (patient_id,))
+    connection.commit()
+
+    if cursor.rowcount > 0:
+        print(f"Successfully deleted patient with ID {patient_id} from the database.")
+    else:
+        print(f"No patient found with Id{patient_id}.")
+
+
+
+
+
+
+
+
 while True:
     print("\n---NUST Hospital---")
     print("1. Add a new patient")
     print("2. View all patients")
     print("3. search for a patient by name")
-    print("4. Exit")
+    print("4. Delete a patient")
+    print("5. Exit")
 
-    choice=input("Please select a number between 1 and 4:")
+    choice=input("Please select a number between 1 and 5:")
 
     if choice=='1':
         print("\n---Add a New Patient---")
@@ -73,8 +98,11 @@ while True:
     elif choice=='3':
         search_name()
     elif choice=='4':
+        delete_patient()
+        print("You have chosen to delete a patient.")
+    elif choice=='5':
         print("Thank you for using NUST Hospital database. Goodbye!")
         connection.close()
         break
     else:
-        print("invalid choice. Please select a valid number between 1 and 4.")
+        print("invalid choice. Please select a valid number between 1 and 5.")
