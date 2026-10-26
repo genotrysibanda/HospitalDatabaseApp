@@ -69,22 +69,33 @@ def delete_patient():
     else:
         print(f"No patient found with Id{patient_id}.")
 
+def update_patient():
+    view_patients()
 
+    try:
+        patient_id= int(input("\nEnter the ID of the patient want to update the information to:"))
+    except ValueError:
+        print("Error:ID must be a number.")
+        return
 
-
-
-
-
-
+    new_name=input("Enter the new name of the patient:")
+    new_illness= input("Enter new illness(or press Enter to keep the current illness):")
+    if new_name:
+        cursor.execute("UPDATE patients SET name = ? WHERE id = ?",(new_name, patient_id))
+    if new_illness:
+       cursor.execute("UPDATE patients SET illness = ? WHERE id =?",(new_illness,patient_id))
+    connection.commit()
+    print(f"Successfully updated patient with ID {patient_id}.")
 while True:
     print("\n---NUST Hospital---")
     print("1. Add a new patient")
     print("2. View all patients")
     print("3. search for a patient by name")
     print("4. Delete a patient")
-    print("5. Exit")
+    print("5. Update patient details")
+    print("6.Exit")
 
-    choice=input("Please select a number between 1 and 5:")
+    choice=input("Please select a number between 1 and 6:")
 
     if choice=='1':
         print("\n---Add a New Patient---")
@@ -101,8 +112,11 @@ while True:
         delete_patient()
         print("You have chosen to delete a patient.")
     elif choice=='5':
-        print("Thank you for using NUST Hospital database. Goodbye!")
-        connection.close()
-        break
+        update_patient()
+        print("You have chosen to update patient details.")
+    elif choice=='6':
+         print("Thank you for using NUST Hospital database. Goodbye!")
+         connection.close()
+         break
     else:
-        print("invalid choice. Please select a valid number between 1 and 5.")
+        print("invalid choice. Please select a valid number between 1 and 6.")
